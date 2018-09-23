@@ -55,17 +55,26 @@ public class TopTen {
 
 		public void map(Object key, Text value, Context context) throws IOException, InterruptedException {
 		    
+		    // Take a single XML node and parse it in a Map object
 		    Map<String, String> parsedXml = transformXmlToMap(value.toString());
+		    // Get the reputation of the node
 			String reputation = parsedXml.get("Reputation");
-			if (reputation != null) {
+			// The try-catch statement is used to handle excpetion due to missing/null values of Reputation
+			try {
+				// Insert the record in the map, the map stores record in ascendent order on Reputation
 				repToRecordMap.put(Integer.parseInt(reputation), new Text(value));
+				// If there are more than 10 records in the map, remove the record on top.
+				// Since the map is ordered, the record on top will be the one with the lowest reputation
 				if (repToRecordMap.size() > 10)
 					repToRecordMap.remove(repToRecordMap.firstKey());
+			} catch(Exception e) {
+				System.out.println("Mapper - Reputation not parsable.");
 			}
 		}
 
 		protected void cleanup(Context context) throws IOException, InterruptedException {
 			
+			// Write the records in the context output to be handled by the Reducer
 			for (Text t : repToRecordMap.values())
 				context.write(NullWritable.get(), t);
 
@@ -80,22 +89,34 @@ public class TopTen {
 
 		public void reduce(NullWritable key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
 		    
+		    // For each node from the mapper, do the same process of the mapper,
+		    // reducing the values to the ten with the highest reputation
 		    for (Text value : values) {
 				Map<String, String> parsed = transformXmlToMap(value.toString());
-				repToRecordMap.put(Integer.parseInt(parsed.get("Reputation")), value);
+				try {
+					repToRecordMap.put(Integer.parseInt(parsed.get("Reputation")), new Text(value));
+				}
+				catch(Exception e) {
+					System.out.println("Reducer - Reputation not parsable.");
+				}
 				if (repToRecordMap.size() > 10)
 					repToRecordMap.remove(repToRecordMap.firstKey());
 			}
 
+			// Use an Index to set the row number
 			Integer index = 1;
+			// FOr each record, get Id and Reputation and store it in a column of the topten table on Hbase
 			for (Text t : repToRecordMap.descendingMap().values()) {
 				// Create the HBase record
 				Map<String, String> parsed = transformXmlToMap(t.toString());
+				// Create the Put object to write it in context output
 				Put insHBase = new Put(Bytes.toBytes(index));
 				insHBase.addColumn(Bytes.toBytes("info"), Bytes.toBytes("id"), Bytes.toBytes(parsed.get("Id")));
 				insHBase.addColumn(Bytes.toBytes("info"), Bytes.toBytes("rep"), Bytes.toBytes(parsed.get("Reputation")));
-				context.write(NullWritable.get(), insHBase);
+				context.write(null, insHBase);
 				index++;
+				System.out.println(parsed.get("Reputation"));
+				System.out.println(parsed.get("Id"));
 			}
 
 		}
@@ -103,20 +124,22 @@ public class TopTen {
 
     public static void main(String[] args) throws Exception {
 		
+		// General configuration
 		Configuration conf = HBaseConfiguration.create();
-		// define scan and define column families to scan
 		Job job = Job.getInstance(conf);
 		job.setJarByClass(TopTen.class);
-
+		// Set the mapper class
 		job.setMapperClass(TopTenMapper.class);
-
+		// Set the path to get the input file
 		FileInputFormat.addInputPath(job, new Path(args[0]));
 
+		// Set the output classes of the mapper
 		job.setMapOutputKeyClass(NullWritable.class);
 		job.setMapOutputValueClass(Text.class);
+		// Set the number of Reducer instances
 		job.setNumReduceTasks(1);
 
-		// define output table
+		// Define the HBaase table in which writing the result
 		TableMapReduceUtil.initTableReducerJob("topten", TopTenReducer.class, job);
 		job.waitForCompletion(true);
 

@@ -1,6 +1,9 @@
 # DATA INTENSIVE COMPUTING Labs
 
 
-### lab1. Hadoop, Hbase, MapReduce
+### Lab1. Hadoop, Hbase, MapReduce
+  * TopTen counter
 
-### lab22. Scala - Spark, SparkSQL
+### Lab2. Scala - Spark, SparkSQL 
+  * analyzing elections data
+  * analyzing apache logs (CFL)

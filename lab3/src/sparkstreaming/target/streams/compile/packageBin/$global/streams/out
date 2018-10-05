@@ -1,0 +1,9 @@
+[0m[[0m[0minfo[0m] [0m[0mPackaging /Users/andreicapastru/Desktop/Data Intensive Computing/data-intensive-computing/lab3/src/sparkstreaming/target/scala-2.11/spark_kafka_2.11-1.0.jar ...[0m
+[0m[[0m[0mdebug[0m] [0m[0mInput file mappings:[0m
+[0m[[0m[0mdebug[0m] [0m[0m	sparkstreaming[0m
+[0m[[0m[0mdebug[0m] [0m[0m	  /Users/andreicapastru/Desktop/Data Intensive Computing/data-intensive-computing/lab3/src/sparkstreaming/target/scala-2.11/classes/sparkstreaming[0m
+[0m[[0m[0mdebug[0m] [0m[0m	sparkstreaming/KafkaSpark$.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	  /Users/andreicapastru/Desktop/Data Intensive Computing/data-intensive-computing/lab3/src/sparkstreaming/target/scala-2.11/classes/sparkstreaming/KafkaSpark$.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	sparkstreaming/KafkaSpark.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	  /Users/andreicapastru/Desktop/Data Intensive Computing/data-intensive-computing/lab3/src/sparkstreaming/target/scala-2.11/classes/sparkstreaming/KafkaSpark.class[0m
+[0m[[0m[0minfo[0m] [0m[0mDone packaging.[0m

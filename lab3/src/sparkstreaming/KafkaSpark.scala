@@ -25,8 +25,7 @@ object KafkaSpark {
     val cluster = Cluster.builder().addContactPoint("127.0.0.1").build()
     val session = cluster.connect()
     session.execute("CREATE KEYSPACE IF NOT EXISTS avg_keyspace WITH REPLICATION = {'class': 'SimpleStrategy', 'replication_factor': 1};")
-    session.execute("USE avg_keyspace;")
-    session.execute("CREATE TABLE avg (word TEXT, count DOUBLE, PRIMARY KEY (word));")
+    session.execute("CREATE TABLE  IF NOT EXISTS avg_keyspace.avg (word text PRIMARY KEY, count float);")
 
     // make a connection to Kafka and read (key, value) pairs from it
     val conf = new SparkConf().setAppName("avg").setMaster("local[2]")
@@ -36,7 +35,7 @@ object KafkaSpark {
 
     val kafkaConf = Map(
         "metadata.broker.list" -> "localhost:9092",
-         "zookeeper.connect" -> "localhost:2181",
+        "zookeeper.connect" -> "localhost:2181",
         "group.id" -> "kafka-spark-streaming",
         "zookeeper.connection.timeout.ms" -> "1000")
 
@@ -46,19 +45,27 @@ object KafkaSpark {
                                         kafkaConf, 
                                         topics)
    
-    //<FILL IN>
-
     // measure the average value for each key in a stateful manner
-    
-  //   def mappingFunc(key: String, value: Option[Double], state: State[Double]): (String, Double) = {
-	 //   //<FILL IN>
-  //   }
-  //   val stateDstream = pairs.mapWithState(//<FILL IN>)
+    def mappingFunc(key: String, value: Option[Double], state: State[(Double, Int)]): (String, Double) = {
+	   
+    }
+    val stateDstream = pairs.mapWithState()//<FILL IN>)
 
-  //   // store the result in Cassandra
-  //   stateDstream.//<FILL IN>
+    // store the result in Cassandra
+    // stateDstream.//<FILL IN>
 
   //   ssc.start()
   //   ssc.awaitTermination()
   }
 }
+
+
+
+
+
+
+
+
+
+
+

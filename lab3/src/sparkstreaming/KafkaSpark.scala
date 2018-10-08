@@ -47,32 +47,32 @@ object KafkaSpark {
 
     val values = messages.map{case (key, value) => value.split(',')}    
     val pairs = values.map(record => (record(0), record(1).toDouble))
-   
+    
     // measure the average value for each key in a stateful manner
     def mappingFunc(key: String, value: Option[Double], state: State[(Double, Int)]): (String, Double) = {
-	    // get the observations of this letter
-        var oldState: (Double, Int) = state.getOption.getOrElse[(Double, Int)]((0.0, 0))
-        val sum = oldState._1 * oldState._2
-        val newCount = oldState._2 + 1
-        if (value.isEmpty) {
-            state.update(oldState)
-        }
-        else  {
-            val newState: (Double, Int) = ((sum + value.get) / newCount, newCount)
-            state.update(newState)
-        }
-        val output = (key, state.getOption.get._1)
-        output
+       // get the observations of this letter
+       var oldState: (Double, Int) = state.getOption.getOrElse[(Double, Int)]((0.0, 0))
+       val sum = oldState._1 * oldState._2
+       val newCount = oldState._2 + 1
+       if (value.isEmpty) {
+        state.update(oldState)
     }
+    else  {
+        val newState: (Double, Int) = ((sum + value.get) / newCount, newCount)
+        state.update(newState)
+    }
+    val output = (key, state.getOption.get._1)
+    output
+}
 
-    val stateDstream = pairs.mapWithState(StateSpec.function(mappingFunc _))
+val stateDstream = pairs.mapWithState(StateSpec.function(mappingFunc _))
 
-    // store the result in Cassandra
-    stateDstream.saveToCassandra("avg_keyspace", "avg", SomeColumns("word", "count"))
+// store the result in Cassandra
+stateDstream.saveToCassandra("avg_keyspace", "avg", SomeColumns("word", "count"))
 
-    ssc.start()
-    ssc.awaitTermination()
-  }
+ssc.start()
+ssc.awaitTermination()
+}
 }
 
 

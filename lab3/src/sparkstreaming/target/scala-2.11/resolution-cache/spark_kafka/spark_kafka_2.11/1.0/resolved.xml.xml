@@ -4,7 +4,7 @@
 		module="spark_kafka_2.11"
 		revision="1.0"
 		status="integration"
-		publication="20181006160602"
+		publication="20181006183429"
 	>
 		<description>
 		spark_kafka

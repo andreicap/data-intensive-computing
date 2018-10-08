@@ -8,4 +8,5 @@
   * analyzing elections data
   * analyzing apache logs (CFL)
 
-### Lab3 Spark, Kafka, Cassandra
+### Lab3. Spark, Kafka, Cassandra
+  * compute the average of a labeled stream of data

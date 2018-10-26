@@ -10,3 +10,7 @@
 
 ### Lab3. Spark, Kafka, Cassandra
   * compute the average of a labeled stream of data
+
+### GraphX
+  * social network
+  * songs relations
